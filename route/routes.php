@@ -11,7 +11,7 @@ Route::middleware('web')->namespace('Hanoivip\Ddd2\Controllers')->group(function
     Route::get('/logout', function () {
         Cookie::queue(Cookie::forget('ddd2_token'));
         Cookie::queue(Cookie::forget('laravel_session'));
-        return response('clean up token & rediect to logout success page');
+        return view('hanoivip::landing');
     })->name('logout');
     Route::get('/logoutsuccess', function () {
         return view('hanoivip::landing');
@@ -20,6 +20,6 @@ Route::middleware('web')->namespace('Hanoivip\Ddd2\Controllers')->group(function
         return view('hanoivip::auth.register');
     })->name('register');
     Route::get('/password/request', function () {
-        return response('Vào app !');
+        return response('Chỉ hỗ trợ tìm lại mật khẩu từ App!');
     })->name('password.request');
 });
