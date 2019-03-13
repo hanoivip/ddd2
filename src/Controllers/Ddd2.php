@@ -5,6 +5,7 @@ use Hanoivip\Ddd2\Services\DddAuthen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
+use Exception;
 
 
 class Ddd2 extends Controller
@@ -21,14 +22,22 @@ class Ddd2 extends Controller
         $username = $request->input('username');
         $password = $request->input('password');
         Log::debug("Ddd2 user is logining {$username}");
-        
-        $accessToken = $this->auth->authen($username, $password);
-        if (!empty($accessToken))
+        try 
         {
-            Cookie::queue(Cookie::make('ddd2_token',  $accessToken));
-            return view('hanoivip::landing');
+            $accessToken = $this->auth->authen($username, $password);
+            if (!empty($accessToken))
+            {
+                Cookie::queue(Cookie::make('ddd2_token',  $accessToken));
+                return view('hanoivip::landing');
+            }
+            else
+                return view('hanoivip::auth.login', ['error' => 'Đăng nhập thất bại, kiểm tra tài khoản hoặc/và mật khẩu']);
+        } 
+        catch (Exception $e) 
+        {
+            Log::error("Ddd2 login ex:" . $e->getMessage());
+            return view('hanoivip::auth.login-exception');
         }
-        else
-            return view('hanoivip::login-fail');
+        
     }
 }

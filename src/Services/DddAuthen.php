@@ -22,7 +22,7 @@ class DddAuthen
         $account = TabAccount::where('user_name', $username)
         ->where('password', $password)
         ->get();
-        if (!empty($account))
+        if ($account->isNotEmpty())
         {
             $account = $account->first();
             $token = uniqid();
