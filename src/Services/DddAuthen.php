@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Hanoivip\Ddd2\Models\TabAccount;
 use Illuminate\Support\Facades\Cache;
 
-class DddAuthen
+class DddAuthen implements IDddAuthen
 {
     /**
      * 1. Query user in database

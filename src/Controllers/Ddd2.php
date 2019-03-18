@@ -1,7 +1,7 @@
 <?php
 
 namespace Hanoivip\Ddd2\Controllers;
-use Hanoivip\Ddd2\Services\DddAuthen;
+use Hanoivip\Ddd2\Services\IDddAuthen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +12,7 @@ class Ddd2 extends Controller
 {
     private $auth;
     
-    public function __construct(DddAuthen $auth)
+    public function __construct(IDddAuthen $auth)
     {
         $this->auth = $auth;
     }
