@@ -48,6 +48,12 @@ class CryptoHelper
        return $this->innerDecrypt($data, $keyarr);
    }
    
+   public function prepareForServlet($encrypt)
+   {
+       $e = pack('C*', bin2hex($encrypt));
+       return join(',', $e);
+   }
+   
    private function getByteFromHexString($str)
    {
        $data = str_replace(',', '', $str);

@@ -1,7 +1,7 @@
 <?php
 
 namespace Hanoivip\Ddd2\Controllers;
-use Hanoivip\Ddd2\Services\IDddAuthen;
+use Hanoivip\Ddd2\IDddAuthen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;

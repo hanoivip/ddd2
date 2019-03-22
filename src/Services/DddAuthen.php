@@ -3,6 +3,7 @@
 namespace Hanoivip\Ddd2\Services;
 
 use Carbon\Carbon;
+use Hanoivip\Ddd2\IDddAuthen;
 use Hanoivip\Ddd2\Models\TabAccount;
 use Illuminate\Support\Facades\Cache;
 
