@@ -31,7 +31,7 @@ class Ddd2 extends Controller
                 return view('hanoivip::landing');
             }
             else
-                return view('hanoivip::auth.login', ['error' => 'Đăng nhập thất bại, kiểm tra tài khoản hoặc/và mật khẩu']);
+                return view('hanoivip::auth.login', ['error' => 'Đăng nhập thất bại, kiểm tra tài khoản và mật khẩu']);
         } 
         catch (Exception $e) 
         {

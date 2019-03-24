@@ -8,7 +8,7 @@ use Hanoivip\Ddd2\Models\TabAccount;
 use Illuminate\Support\Facades\Cache;
 
 class DddAuthen implements IDddAuthen
-{
+{   
     /**
      * 1. Query user in database
      * 2. Generate and cache tokens

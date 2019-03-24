@@ -17,15 +17,14 @@ class AuthServiceProvider extends ServiceProvider
             __DIR__ . '/../config/ipd.php' => config_path('ipd.php'),
             __DIR__ . '/../config/auth.php' => config_path('auth.php'),
         ]);
-        
+        $this->loadRoutesFrom(__DIR__ . '/../route/api.php');
         $this->loadRoutesFrom(__DIR__ . '/../route/routes.php');
         $this->loadViewsFrom(__DIR__ . '/../views', 'hanoivip');
-        
+        $this->loadTranslationsFrom( __DIR__.'/../lang', 'hanoivip');
         // add guard provider: old passport
         Auth::provider('ddd2', function ($app, array $config) {
             return new TokenToUserProvider();
         });
-
         // add custom guard: old access_token
         Auth::extend('ddd2_token', function ($app, $name, array $config) {
             // automatically build the DI, put it as reference
