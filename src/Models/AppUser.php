@@ -39,12 +39,12 @@ class AppUser extends Model implements AuthenticatableContract, AuthorizableCont
         $token = $credentials['access_token'];
         $auth = new DddAuthen();
         $arr_user = $auth->getUserByToken($token);
-        if (! is_null($arr_user)) {
+        if (!empty($arr_user)) {
             $this->username = $arr_user['user_name'];
             $this->email = $arr_user['email'];
             $this->id = $arr_user['id'];
+            return $this;
         }
-        return $this;
     }
     
     public function getAuthIdentifierName()

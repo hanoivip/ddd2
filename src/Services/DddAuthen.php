@@ -27,7 +27,7 @@ class DddAuthen implements IDddAuthen
         {
             $account = $account->first();
             $token = uniqid();
-            Cache::put($token, $account, Carbon::now()->addMinutes(60));
+            Cache::put($token, $account, Carbon::now()->addDays(7));
             return $token;
         }
     }

@@ -23,7 +23,7 @@ class AccessTokenGuard implements Guard
     
     public function user()
     {
-        if (!is_null($this->user)) 
+        if (!empty($this->user)) 
         {
             return $this->user;
         }
