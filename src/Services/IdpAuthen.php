@@ -2,6 +2,7 @@
 
 namespace Hanoivip\Ddd2\Services;
 
+use Hanoivip\Ddd2\IDddAuthen;
 use Illuminate\Support\Facades\Cache;
 
 

@@ -27,14 +27,14 @@ class TokenToUserProvider implements UserProvider
         if (Cache::has($key))
         {
             $user = Cache::get($key);
-            //Log::debug("TokenUserProvider retrieveByToken found in cache:" . print_r($user, true));
+            Log::debug("TokenUserProvider retrieveByToken found in cache:" . print_r($user, true));
             return $user;
         }
         else 
         {
             $user = new AppUser();
             $user->fetchUserByCredentials(['access_token' => $token]);
-            //Log::debug("TokenUserProvider retrieveByToken:" . print_r($user, true));
+            Log::debug("TokenUserProvider retrieveByToken:" . print_r($user, true));
             if ($user->getAuthIdentifier() > 0)
             {
                 Cache::put($key, $user, now()->addMinutes(60));

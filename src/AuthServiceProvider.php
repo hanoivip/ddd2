@@ -7,7 +7,6 @@ use Hanoivip\Ddd2\Extensions\AccessTokenGuard;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Hanoivip\Ddd2\Services\DddAuthen;
-use Hanoivip\Ddd2\IDddAuthen;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -21,6 +20,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/../route/routes.php');
         $this->loadViewsFrom(__DIR__ . '/../views', 'hanoivip');
         $this->loadTranslationsFrom( __DIR__.'/../lang', 'hanoivip');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         // add guard provider: old passport
         Auth::provider('ddd2', function ($app, array $config) {
             return new TokenToUserProvider();

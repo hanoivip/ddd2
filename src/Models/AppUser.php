@@ -19,6 +19,8 @@ class AppUser extends Model implements AuthenticatableContract, AuthorizableCont
     
     protected $id;
     
+    public $api_token;
+    
     protected $fillable = [
         'id'
     ];
@@ -30,6 +32,7 @@ class AppUser extends Model implements AuthenticatableContract, AuthorizableCont
             $this->id = $data['id'];
             $this->email = $data['email'];
             $this->username = $data['name'];
+            $this->api_token = $data['api_token'];
             $this->attributes['id'] = $data['id'];
         }
     }
@@ -43,6 +46,7 @@ class AppUser extends Model implements AuthenticatableContract, AuthorizableCont
             $this->username = $arr_user['user_name'];
             $this->email = $arr_user['email'];
             $this->id = $arr_user['id'];
+            $this->api_token = $arr_user['api_token'];
             return $this;
         }
     }
