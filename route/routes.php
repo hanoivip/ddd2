@@ -1,14 +1,19 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->namespace('Hanoivip\Ddd2\Controllers')->group(function () {
     Route::get('/login', function () {
+        if (Auth::check())
+            return redirect('/');
         return view('hanoivip::auth.login');
     })->name('login');
     Route::post('/login', 'Ddd2@login')->name('doLogin');
     Route::get('/logout', function () {
+        if (!Auth::check())
+            return redirect('/');
         Cookie::queue(Cookie::forget('ddd2_token'));
         Cookie::queue(Cookie::forget('laravel_session'));
         return view('hanoivip::landing');

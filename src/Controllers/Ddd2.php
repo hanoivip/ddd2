@@ -3,6 +3,7 @@
 namespace Hanoivip\Ddd2\Controllers;
 use Hanoivip\Ddd2\IDddAuthen;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Exception;
