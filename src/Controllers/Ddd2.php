@@ -1,6 +1,6 @@
 <?php
-
 namespace Hanoivip\Ddd2\Controllers;
+
 use Hanoivip\Ddd2\IDddAuthen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +19,13 @@ class Ddd2 extends Controller
     }
     
     public function login(Request $request)
+    {
+        if (Auth::check())
+            return redirect('/');
+        return view('hanoivip::auth.login');
+    }
+    
+    public function doLogin(Request $request)
     {
         $username = $request->input('username');
         $password = $request->input('password');
@@ -40,5 +47,29 @@ class Ddd2 extends Controller
             return view('hanoivip::auth.login-exception');
         }
         
+    }
+    
+    public function logout(Request $request)
+    {
+        if (!Auth::check())
+            return redirect('/');
+            Cookie::queue(Cookie::forget('ddd2_token'));
+            Cookie::queue(Cookie::forget('laravel_session'));
+        return view('hanoivip::landing');
+    }
+    
+    public function onLogout(Request $request)
+    {
+        return view('hanoivip::landing');
+    }
+    
+    public function register(Request $request)
+    {
+        return view('hanoivip::auth.register');
+    }
+    
+    public function forgotPass(Request $request)
+    {
+        return view('hanoivip::auth.passwords.reset');
     }
 }
