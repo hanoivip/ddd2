@@ -18,7 +18,7 @@ class AccessTokenGuard implements Guard
     public function __construct (UserProvider $provider, Request $request, $configuration) {
         $this->provider = $provider;
         $this->request = $request;
-        $this->inputKey = isset($configuration['input_key']) ? $configuration['input_key'] : 'ddd2_token';
+        $this->inputKey = isset($configuration['input_key']) ? $configuration['input_key'] : 'access_token';
     }
     
     public function user()
@@ -32,7 +32,7 @@ class AccessTokenGuard implements Guard
         
         // retrieve via token
         $token = $this->getTokenForRequest();
-        Log::debug("Guard: token passed:" . $token);
+        // Log::debug("Guard: token passed:" . $token);
         
         if (!empty($token)) {
             // the token was found, how you want to pass?

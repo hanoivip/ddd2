@@ -21,12 +21,12 @@ class AuthServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../views', 'hanoivip');
         $this->loadTranslationsFrom( __DIR__.'/../lang', 'hanoivip');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        // add guard provider: old passport
+        // add guard provider: old value: 'passport'
         Auth::provider('ddd2', function ($app, array $config) {
             return new TokenToUserProvider();
         });
-        // add custom guard: old access_token
-        Auth::extend('ddd2_token', function ($app, $name, array $config) {
+        // add custom guard: old value 'access_token'
+        Auth::extend('access_token', function ($app, $name, array $config) {
             // automatically build the DI, put it as reference
             $userProvider = app(TokenToUserProvider::class);
             $request = app('request');

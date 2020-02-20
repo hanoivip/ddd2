@@ -35,7 +35,7 @@ class Ddd2 extends Controller
             $accessToken = $this->auth->authen($username, $password);
             if (!empty($accessToken))
             {
-                Cookie::queue(Cookie::make('ddd2_token',  $accessToken));
+                Cookie::queue(Cookie::make('access_token',  $accessToken));
                 return view('hanoivip::landing');
             }
             else
@@ -53,7 +53,7 @@ class Ddd2 extends Controller
     {
         if (!Auth::check())
             return redirect('/');
-            Cookie::queue(Cookie::forget('ddd2_token'));
+            Cookie::queue(Cookie::forget('access_token'));
             Cookie::queue(Cookie::forget('laravel_session'));
         return view('hanoivip::landing');
     }

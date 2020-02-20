@@ -12,7 +12,7 @@ use Illuminate\Contracts\Encryption\Encrypter as EncrypterContract;
 
 class EncryptToken
 {
-    private $inputKey = 'ddd2_token';
+    private $inputKey = 'access_token';
     
     protected $encrypter;
     
