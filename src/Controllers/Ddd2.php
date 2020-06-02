@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Carbon\Carbon;
 
 
 class Ddd2 extends Controller
@@ -35,16 +36,31 @@ class Ddd2 extends Controller
             $accessToken = $this->auth->authen($username, $password);
             if (!empty($accessToken))
             {
-                Cookie::queue(Cookie::make('access_token',  $accessToken));
-                return view('hanoivip::landing');
+                if ($request->ajax())
+                {
+                    return ['error'=>0, 'message'=>'login success', 'data'=>['token' => $accessToken, 'expires' => Carbon::now()->timestamp]];    
+                }
+                else 
+                {
+                    Cookie::queue(Cookie::make('access_token',  $accessToken));
+                    return view('hanoivip::landing');
+                }
             }
             else
-                return view('hanoivip::auth.login', ['error' => 'Đăng nhập thất bại, kiểm tra tài khoản và mật khẩu']);
+            {
+                if ($request->ajax())
+                    return ['error'=>1, 'message'=>'Đăng nhập thất bại, kiểm tra tài khoản và mật khẩu', 'data'=>[]];
+                else
+                    return view('hanoivip::auth.login', ['error' => 'Đăng nhập thất bại, kiểm tra tài khoản và mật khẩu']);
+            }
         } 
         catch (Exception $e) 
         {
             Log::error("Ddd2 login ex:" . $e->getMessage());
-            return view('hanoivip::auth.login-exception');
+            if ($request->ajax())
+                return ['error'=>2, 'message'=>'Ddd2 login exception!', 'data'=>[]];
+            else
+                return view('hanoivip::auth.login-exception');
         }
         
     }
@@ -53,9 +69,12 @@ class Ddd2 extends Controller
     {
         if (!Auth::check())
             return redirect('/');
-            Cookie::queue(Cookie::forget('access_token'));
-            Cookie::queue(Cookie::forget('laravel_session'));
-        return view('hanoivip::landing');
+        Cookie::queue(Cookie::forget('access_token'));
+        Cookie::queue(Cookie::forget('laravel_session'));
+        if ($request->ajax())
+            return ['error'=>0, 'message'=>'logout success', 'data'=>[]];
+        else
+            return view('hanoivip::landing');
     }
     
     public function onLogout(Request $request)
@@ -66,6 +85,21 @@ class Ddd2 extends Controller
     public function register(Request $request)
     {
         return view('hanoivip::auth.register');
+    }
+    
+    public function doRegister(Request $request)
+    {
+        return ['error'=>1, 'message'=>'registration from app only!', 'data'=>[]]; 
+    }
+    
+    public function doGetInfo(Request $request)
+    {
+        if (!Auth::check())
+        {
+            return ['error'=>1, 'message'=>'token invalid', 'data'=>[]]; 
+        }
+        $user = Auth::user();
+        return ['error'=>0, 'message'=>'info success', 'data'=>['name' => $user->getAuthIdentifierName(), 'email' => $user['email']]];
     }
     
     public function forgotPass(Request $request)
