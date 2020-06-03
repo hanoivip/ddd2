@@ -38,7 +38,7 @@ class Ddd2 extends Controller
             {
                 if ($request->ajax())
                 {
-                    return response()->json(['error'=>0, 'message'=>'login success', 'data'=>['token' => $accessToken, 'expires' => Carbon::now()->timestamp]])->header('Access-Control-Allow-Origin', '*')->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');   
+                    return response()->json(['error'=>0, 'message'=>'login success', 'data'=>['token' => $accessToken, 'expires' => Carbon::now()->timestamp]]);   
                 }
                 else 
                 {
@@ -49,7 +49,7 @@ class Ddd2 extends Controller
             else
             {
                 if ($request->ajax())
-                    return response()->json(['error'=>1, 'message'=>'Đăng nhập thất bại, kiểm tra tài khoản và mật khẩu', 'data'=>[]])->header('Access-Control-Allow-Origin', '*')->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                    return response()->json(['error'=>1, 'message'=>'Đăng nhập thất bại, kiểm tra tài khoản và mật khẩu', 'data'=>[]]);
                 else
                     return view('hanoivip::auth.login', ['error' => 'Đăng nhập thất bại, kiểm tra tài khoản và mật khẩu']);
             }
@@ -58,7 +58,7 @@ class Ddd2 extends Controller
         {
             Log::error("Ddd2 login ex:" . $e->getMessage());
             if ($request->ajax())
-                return response()->json(['error'=>2, 'message'=>'Ddd2 login exception!', 'data'=>[]])->header('Access-Control-Allow-Origin', '*')->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+                return response()->json(['error'=>2, 'message'=>'Ddd2 login exception!', 'data'=>[]]);
             else
                 return view('hanoivip::auth.login-exception');
         }
@@ -72,7 +72,7 @@ class Ddd2 extends Controller
         Cookie::queue(Cookie::forget('access_token'));
         Cookie::queue(Cookie::forget('laravel_session'));
         if ($request->ajax())
-            return response()->json(['error'=>0, 'message'=>'logout success', 'data'=>[]])->header('Access-Control-Allow-Origin', '*')->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            return response()->json(['error'=>0, 'message'=>'logout success', 'data'=>[]]);
         else
             return view('hanoivip::landing');
     }
@@ -89,17 +89,18 @@ class Ddd2 extends Controller
     
     public function doRegister(Request $request)
     {
-        return response()->json(['error'=>1, 'message'=>'registration from app only!', 'data'=>[]])->header('Access-Control-Allow-Origin', '*')->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        return response()->json(['error'=>1, 'message'=>'registration from app only!', 'data'=>[]]);
     }
     
     public function doGetInfo(Request $request)
     {
         if (!Auth::check())
         {
-            return response()->json(['error'=>1, 'message'=>'token invalid', 'data'=>[]])->header('Access-Control-Allow-Origin', '*')->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            return response()->json(['error'=>1, 'message'=>'token invalid', 'data'=>[]]);
         }
-        $user = Auth::user();
-        return response()->json(['error'=>0, 'message'=>'info success', 'data'=>['name' => $user->getAuthIdentifierName(), 'email' => $user['email']]])->header('Access-Control-Allow-Origin', '*')->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        $token = $request->input('access_token');
+        $user = $this->auth->getUserByToken($token);
+        return response()->json(['error'=>0, 'message'=>'info success', 'data'=>['name' => $user['user_name'], 'email' => $user['email'], 'create_time' => $user['create_time'], 'channel' => $user['channel']]]);
     }
     
     public function forgotPass(Request $request)

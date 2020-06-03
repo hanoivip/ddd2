@@ -13,7 +13,7 @@ Route::middleware('api')->namespace('Hanoivip\Ddd2\Controllers')
     ->prefix('api')
     ->group(function () {
         Route::any('/login', 'Ddd2@doLogin');
-        Route::any('/info', 'Ddd2@doGetInfo');
+        Route::any('/userinfo', 'Ddd2@doGetInfo');
         Route::any('/register', 'Ddd2@doRegister');
         Route::any('/logout', 'Ddd2@logout');
     });
