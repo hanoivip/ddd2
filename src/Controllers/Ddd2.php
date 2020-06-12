@@ -68,7 +68,12 @@ class Ddd2 extends Controller
     public function logout(Request $request)
     {
         if (!Auth::check())
-            return redirect('/');
+        {
+            if ($request->ajax())
+                return response()->json(['error'=>1, 'message'=>'not login yet', 'data'=>[]]);
+            else
+                return redirect('/');
+        }
         Cookie::queue(Cookie::forget('access_token'));
         Cookie::queue(Cookie::forget('laravel_session'));
         if ($request->ajax())
@@ -89,7 +94,16 @@ class Ddd2 extends Controller
     
     public function doRegister(Request $request)
     {
-        return response()->json(['error'=>1, 'message'=>'registration from app only!', 'data'=>[]]);
+        $username = $request->input('username');
+        $password = $request->input('password');
+        $result = $this->auth->createUser($username, $password);
+        if ($result === true)
+            return response()->json(['error'=>0, 'message' => 'registration success', 'data' => []]);
+        else
+        {
+            Log::error('Registration error: ' . $result);
+            return response()->json(['error'=>1, 'message'=> 'registration fail', 'data'=>[]]);
+        }
     }
     
     public function doGetInfo(Request $request)

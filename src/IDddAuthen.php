@@ -17,4 +17,10 @@ interface IDddAuthen
      * @return array
      */
     public function getUserByToken($token);
+    /**
+     * 
+     * @param string $username
+     * @param string $password
+     */
+    public function createUser($username, $password);
 }

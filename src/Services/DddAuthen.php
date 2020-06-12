@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Hanoivip\Ddd2\IDddAuthen;
 use Hanoivip\Ddd2\Models\TabAccount;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class DddAuthen implements IDddAuthen
 {   
@@ -47,4 +48,19 @@ class DddAuthen implements IDddAuthen
             return Cache::get($token);
         }
     }
+    
+    public function createUser($username, $password)
+    {
+        $account = new TabAccount();
+        $account->udid = Str::uuid();
+        $account->user_name = $username;
+        $account->password = $password;
+        $account->status = 2;
+        $account->create_time = Carbon::now()->format('d-m-Y H:i:s');
+        $account->save();
+        return true;
+    }
+
+    
+    
 }

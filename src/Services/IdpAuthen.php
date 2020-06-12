@@ -49,6 +49,7 @@ class IdpAuthen implements IDddAuthen
             return $token;
         }
     }
-
     
+    public function createUser($username, $password)
+    {}
 }
