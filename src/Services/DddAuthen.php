@@ -56,7 +56,7 @@ class DddAuthen implements IDddAuthen
         $account->user_name = $username;
         $account->password = $password;
         $account->status = 2;
-        $account->create_time = Carbon::now()->format('d-m-Y H:i:s');
+        $account->create_time = Carbon::now()->format('Y-m-d H:i:s');
         $account->save();
         return true;
     }

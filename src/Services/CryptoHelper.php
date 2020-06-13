@@ -50,7 +50,12 @@ class CryptoHelper
    
    public function prepareForServlet($encrypt)
    {
-       $e = pack('C*', bin2hex($encrypt));
+       //print_r($encrypt);
+       //print_r(bin2hex($encrypt));
+       //$e = pack('C*', bin2hex($encrypt));
+       echo count($encrypt);
+       $e = pack('C*', $encrypt);
+       print_r('Test..........' . count($e));
        return join(',', $e);
    }
    

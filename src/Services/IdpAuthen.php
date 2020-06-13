@@ -38,7 +38,7 @@ class IdpAuthen implements IDddAuthen
             'isChannel' => 0,
             'sign' => md5($id . $username . $password . $channel . '0' . config('ipd.secret')),
         ];
-        $encrypt = $this->crypto->encrypt(json_encode($request), config('ipd.crypto'));
+        $encrypt = $this->crypto->encrypt(json_encode($request), config('ipd.crypt'));
         $data = $this->crypto->prepareForServlet($encrypt);
         // Http POST
         $uri = config('ipd.uri') . '/load?data=' . $data;
