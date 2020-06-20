@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Exception;
 use Carbon\Carbon;
 
@@ -26,8 +27,28 @@ class Ddd2 extends Controller
         return view('hanoivip::auth.login');
     }
     
+    private function validateLogin($request)
+    {
+        return Validator::make($request->all(), [
+            'username' => ['required', 'string', 'min:6', 'max:32'],
+            'password' => ['required', 'string', 'min:6'],
+        ]);
+    }
+    
     public function doLogin(Request $request)
     {
+        $validator = $this->validateLogin($request);
+        if ($validator->fails())
+        {
+            if ($request->expectsJson())
+            {
+                return response()->json(['error'=>1, 'message' => 'Thông tin đăng ký không hợp lệ!', 'data' => $validator->errors()]);
+            }
+            else
+            {
+                return redirect()->route('login')->withErrors($validator)->withInput();
+            }
+        }
         $username = $request->input('username');
         $password = $request->input('password');
         Log::debug("Ddd2 user is logining {$username}");
@@ -92,8 +113,28 @@ class Ddd2 extends Controller
         return view('hanoivip::auth.register');
     }
     
+    private function validateRegister($request)
+    {
+        return Validator::make($request->all(), [
+            'username' => ['required', 'string', 'min:6', 'max:32'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ]);
+    }
+    
     public function doRegister(Request $request)
     {
+        $validator = $this->validateRegister($request);
+        if ($validator->fails()) 
+        {
+            if ($request->expectsJson())
+            {
+                return response()->json(['error'=>1, 'message' => 'Thông tin đăng ký không hợp lệ!', 'data' => $validator->errors()]);
+            }
+            else
+            {
+                return redirect()->route('register')->withErrors($validator)->withInput();
+            }
+        }
         $username = $request->input('username');
         $password = $request->input('password');
         try {
@@ -108,7 +149,7 @@ class Ddd2 extends Controller
             }   
             else {
                 if ($request->expectsJson()) {
-                    return response()->json(['error'=>0, 'message' => $result, 'data' => []]);
+                    return response()->json(['error'=>2, 'message' => $result, 'data' => []]);
                 }
                 else {
                     return view('hanoivip::auth.register', ['error' => $result ]);
@@ -117,7 +158,7 @@ class Ddd2 extends Controller
         } catch (Exception $e) {
             Log::error('Registration exception: ' . $e->getMessage());
             if ($request->expectsJson()) {
-                return response()->json(['error'=>2, 'message' => "Registration exception", 'data' => []]);
+                return response()->json(['error'=>3, 'message' => "Registration exception", 'data' => []]);
             }
             else {
                 return view('hanoivip::auth.register', ['error' => "Registration exception" ]);
