@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Hanoivip\Events\UserLogin;
 use Hanoivip\Ddd2\Models\AppUser;
+use Hanoivip\Ddd2\IDddAuthen;
 
 class TokenToUserProvider implements UserProvider
 {
@@ -32,8 +33,8 @@ class TokenToUserProvider implements UserProvider
         }
         else 
         {
-            $user = new AppUser();
-            $user->fetchUserByCredentials(['access_token' => $token]);
+            $auth = app()->make(IDddAuthen::class);
+            $user = $auth->getUserByToken($token);
             Log::debug("TokenUserProvider retrieveByToken:" . print_r($user, true));
             if ($user->getAuthIdentifier() > 0)
             {

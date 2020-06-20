@@ -7,6 +7,7 @@ use Hanoivip\Ddd2\Extensions\AccessTokenGuard;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Hanoivip\Ddd2\Services\DddAuthen;
+use Hanoivip\Ddd2\Services\IdpAuthen;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -36,6 +37,8 @@ class AuthServiceProvider extends ServiceProvider
     
     public function register()
     {
-        $this->app->bind(IDddAuthen::class, DddAuthen::class);
+        //$this->app->bind(IDddAuthen::class, DddAuthen::class);
+        //switch to IDP to support registration
+        $this->app->bind(IDddAuthen::class, IdpAuthen::class);
     }
 }

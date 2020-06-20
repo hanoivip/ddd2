@@ -36,7 +36,7 @@ class Ddd2 extends Controller
             $accessToken = $this->auth->authen($username, $password);
             if (!empty($accessToken))
             {
-                if ($request->ajax())
+                if ($request->expectsJson())
                 {
                     return response()->json(['error'=>0, 'message'=>'login success', 'data'=>['token' => $accessToken, 'expires' => Carbon::now()->timestamp]]);   
                 }
@@ -48,16 +48,16 @@ class Ddd2 extends Controller
             }
             else
             {
-                if ($request->ajax())
-                    return response()->json(['error'=>1, 'message'=>'Đăng nhập thất bại, kiểm tra tài khoản và mật khẩu', 'data'=>[]]);
+                if ($request->expectsJson())
+                    return response()->json(['error'=>1, 'message'=> __('hanoivip::auth.failed'), 'data'=>[]]);
                 else
-                    return view('hanoivip::auth.login', ['error' => 'Đăng nhập thất bại, kiểm tra tài khoản và mật khẩu']);
+                    return view('hanoivip::auth.login', ['error' => __('hanoivip::auth.failed')]);
             }
         } 
         catch (Exception $e) 
         {
             Log::error("Ddd2 login ex:" . $e->getMessage());
-            if ($request->ajax())
+            if ($request->expectsJson())
                 return response()->json(['error'=>2, 'message'=>'Ddd2 login exception!', 'data'=>[]]);
             else
                 return view('hanoivip::auth.login-exception');
@@ -69,14 +69,14 @@ class Ddd2 extends Controller
     {
         if (!Auth::check())
         {
-            if ($request->ajax())
+            if ($request->expectsJson())
                 return response()->json(['error'=>1, 'message'=>'not login yet', 'data'=>[]]);
             else
                 return redirect('/');
         }
         Cookie::queue(Cookie::forget('access_token'));
         Cookie::queue(Cookie::forget('laravel_session'));
-        if ($request->ajax())
+        if ($request->expectsJson())
             return response()->json(['error'=>0, 'message'=>'logout success', 'data'=>[]]);
         else
             return view('hanoivip::landing');
@@ -96,13 +96,32 @@ class Ddd2 extends Controller
     {
         $username = $request->input('username');
         $password = $request->input('password');
-        $result = $this->auth->createUser($username, $password);
-        if ($result === true)
-            return response()->json(['error'=>0, 'message' => 'registration success', 'data' => []]);
-        else
-        {
-            Log::error('Registration error: ' . $result);
-            return response()->json(['error'=>1, 'message'=> 'registration fail', 'data'=>[]]);
+        try {
+            $result = $this->auth->createUser($username, $password);
+            if ($result === true) {
+                if ($request->expectsJson()) {
+                    return response()->json(['error'=>0, 'message' => 'registration success', 'data' => []]);
+                }
+                else {
+                    return view('hanoivip::auth.register', ['error' => 'registration success']);
+                }
+            }   
+            else {
+                if ($request->expectsJson()) {
+                    return response()->json(['error'=>0, 'message' => $result, 'data' => []]);
+                }
+                else {
+                    return view('hanoivip::auth.register', ['error' => $result ]);
+                }
+            }
+        } catch (Exception $e) {
+            Log::error('Registration exception: ' . $e->getMessage());
+            if ($request->expectsJson()) {
+                return response()->json(['error'=>2, 'message' => "Registration exception", 'data' => []]);
+            }
+            else {
+                return view('hanoivip::auth.register', ['error' => "Registration exception" ]);
+            }
         }
     }
     

@@ -4,14 +4,12 @@ namespace Hanoivip\Ddd2\Models;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
-use Illuminate\Database\Eloquent\Model;
-use Hanoivip\Ddd2\Services\DddAuthen;
+//use Illuminate\Database\Eloquent\Model;
+use Hanoivip\Ddd2\IDddAuthen;
 
-class AppUser extends Model implements AuthenticatableContract, AuthorizableContract
+class AppUser implements AuthenticatableContract, AuthorizableContract
 {
     use Authorizable;
-    
-    protected $guard_name = 'web';
     
     protected $username;
     
@@ -21,26 +19,27 @@ class AppUser extends Model implements AuthenticatableContract, AuthorizableCont
     
     public $api_token;
     
-    protected $fillable = [
-        'id'
-    ];
-    
     public function __construct($data = null)
     {
         if (!empty($data))
         {
             $this->id = $data['id'];
             $this->email = $data['email'];
-            $this->username = $data['name'];
+            $this->username = $data['user_name'];
             $this->api_token = $data['api_token'];
-            $this->attributes['id'] = $data['id'];
+        }
+        else {
+            $this->username = "";
+            $this->email = "";
+            $this->id = 0;
+            $this->api_token = "";
         }
     }
     
     public function fetchUserByCredentials(Array $credentials)
     {   
         $token = $credentials['access_token'];
-        $auth = new DddAuthen();
+        $auth = app()->make(IDddAuthen::class);
         $arr_user = $auth->getUserByToken($token);
         if (!empty($arr_user)) {
             $this->username = $arr_user['user_name'];
