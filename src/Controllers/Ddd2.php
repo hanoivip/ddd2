@@ -100,10 +100,10 @@ class Ddd2 extends Controller
             $result = $this->auth->createUser($username, $password);
             if ($result === true) {
                 if ($request->expectsJson()) {
-                    return response()->json(['error'=>0, 'message' => 'registration success', 'data' => []]);
+                    return response()->json(['error'=>0, 'message' => __('hanoivip::auth.success'), 'data' => []]);
                 }
                 else {
-                    return view('hanoivip::auth.register', ['error' => 'registration success']);
+                    return view('hanoivip::auth.login', ['error' => __('hanoivip::auth.success')]);
                 }
             }   
             else {
