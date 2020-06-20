@@ -141,7 +141,9 @@ class Ddd2 extends Controller
             $result = $this->auth->createUser($username, $password);
             if ($result === true) {
                 if ($request->expectsJson()) {
-                    return response()->json(['error'=>0, 'message' => __('hanoivip::auth.success'), 'data' => []]);
+                    //auto login for this client
+                    $accessToken = $this->auth->authen($username, $password);
+                    return response()->json(['error'=>0, 'message' => __('hanoivip::auth.success'), 'data' => ['token' => $accessToken, 'expires' => Carbon::now()->timestamp]]);
                 }
                 else {
                     return view('hanoivip::auth.login', ['error' => __('hanoivip::auth.success')]);
