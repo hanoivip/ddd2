@@ -176,7 +176,8 @@ class Ddd2 extends Controller
         }
         $token = $request->input('access_token');
         $user = $this->auth->getUserByToken($token);
-        return response()->json(['error'=>0, 'message'=>'info success', 'data'=>['name' => $user['user_name'], 'email' => $user['email'], 'create_time' => $user['create_time'], 'channel' => $user['channel']]]);
+        return response()->json(['error'=>0, 'message'=>'info success', 
+            'data'=>['name' => $user->getAuthIdentifierName(), 'email' => $user->email, 'create_time' => $user->createTime]]);
     }
     
     public function forgotPass(Request $request)

@@ -11,13 +11,17 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
 {
     use Authorizable;
     
-    protected $username;
+    public $username;
     
-    protected $email;
+    public $email;
     
-    protected $id;
+    public $id;
     
     public $api_token;
+    
+    public $channel;
+    
+    public $createTime;
     
     public function __construct($data = null)
     {
@@ -27,12 +31,16 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
             $this->email = $data['email'];
             $this->username = $data['user_name'];
             $this->api_token = $data['api_token'];
+            $this->channel = $data['channel'];
+            $this->createTime = $data['create_time'];
         }
         else {
             $this->username = "";
             $this->email = "";
             $this->id = 0;
             $this->api_token = "";
+            $this->channel = 0;
+            $this->createTime = 0;
         }
     }
     
@@ -46,6 +54,8 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
             $this->email = $arr_user['email'];
             $this->id = $arr_user['id'];
             $this->api_token = $arr_user['api_token'];
+            $this->channel = $arr_user['channel'];
+            $this->createTime = $arr_user['create_time'];
             return $this;
         }
     }
