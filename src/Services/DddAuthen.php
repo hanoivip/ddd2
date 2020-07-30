@@ -7,6 +7,7 @@ use Hanoivip\Ddd2\IDddAuthen;
 use Hanoivip\Ddd2\Models\TabAccount;
 use Illuminate\Support\Facades\Cache;
 use Exception;
+use Hanoivip\Ddd2\Models\AppUser;
 
 class DddAuthen implements IDddAuthen
 {   
@@ -28,7 +29,15 @@ class DddAuthen implements IDddAuthen
         {
             $account = $account->first();
             $token = uniqid();
-            $account["api_token"] = $token;
+            //$account["api_token"] = $token;
+            $account = new AppUser([
+                'id' => $account['id'],
+                'email' => $account['email'],
+                'user_name' => $account['user_name'],
+                'api_token' => $token,
+                'channel' => 0,
+                'create_time' => 0, //$userinfo['createTime']['time']
+            ]);
             Cache::put($token, $account, Carbon::now()->addDays(7));
             return $token;
         }

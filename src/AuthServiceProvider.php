@@ -37,8 +37,9 @@ class AuthServiceProvider extends ServiceProvider
     
     public function register()
     {
-        //$this->app->bind(IDddAuthen::class, DddAuthen::class);
-        //switch to IDP to support registration
-        $this->app->bind(IDddAuthen::class, IdpAuthen::class);
+        if (config('ddd2.auth') == 'ipd')
+            $this->app->bind(IDddAuthen::class, IdpAuthen::class);
+        else
+            $this->app->bind(IDddAuthen::class, DddAuthen::class); 
     }
 }
