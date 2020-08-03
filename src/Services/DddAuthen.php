@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Hanoivip\Ddd2\IDddAuthen;
 use Hanoivip\Ddd2\Models\TabAccount;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Exception;
 use Hanoivip\Ddd2\Models\AppUser;
 
@@ -38,6 +39,7 @@ class DddAuthen implements IDddAuthen
                 'channel' => 0,
                 'create_time' => 0, //$userinfo['createTime']['time']
             ]);
+            Log::debug('Generated token:' . $token);
             Cache::put($token, $account, Carbon::now()->addDays(7));
             return $token;
         }
@@ -52,9 +54,14 @@ class DddAuthen implements IDddAuthen
      */
     public function getUserByToken($token)
     {
+        Log::debug('Get user by token:' . $token);
         if (Cache::has($token))
         {
             return Cache::get($token);
+        }
+        else
+        {
+            return new AppUser();
         }
     }
     
