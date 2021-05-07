@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Hanoivip\Ddd2\IDddAuthen;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Mervick\CurlHelper;
 use Hanoivip\Ddd2\Models\AppUser;
 
 /**
@@ -50,7 +51,7 @@ class IdpAuthen implements IDddAuthen
         //$data = $this->crypto->prepareForServlet($encrypt);
         // Http POST
         $uri = config('ipd.uri') . '/load?rdata=' . json_encode($request);
-        $response = \CurlHelper::factory($uri)->exec();
+        $response = CurlHelper::factory($uri)->exec();
         if (!empty($response['data']) && isset($response['data']['token']))
         {
             $token = $response['data']['token'];
@@ -84,7 +85,7 @@ class IdpAuthen implements IDddAuthen
             'sign' => md5($id . $username . $password . $channel . config('ipd.secret')),
         ];
         $uri = config('ipd.uri') . '/create?rdata=' . json_encode($request);
-        $response = \CurlHelper::factory($uri)->exec();
+        $response = CurlHelper::factory($uri)->exec();
         if (!empty($response['data']) && isset($response['data']['result']))
         {
             if ($response['data']['result'] == 200)
