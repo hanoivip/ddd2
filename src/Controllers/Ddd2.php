@@ -59,7 +59,9 @@ class Ddd2 extends Controller
             {
                 if ($request->expectsJson())
                 {
-                    return response()->json(['error'=>0, 'message'=>'login success', 'data'=>['token' => $accessToken, 'expires' => Carbon::now()->timestamp]]);   
+                    $user = $this->auth->getUserByToken($accessToken);
+                    return response()->json(['error'=>0, 'message'=>'login success', 
+                        'data'=>['token' => $accessToken, 'expires' => Carbon::now()->addDays(30)->timestamp, 'app_user_id' => $user->getAuthIdentifier()]]);   
                 }
                 else 
                 {
@@ -143,7 +145,9 @@ class Ddd2 extends Controller
                 if ($request->expectsJson()) {
                     //auto login for this client
                     $accessToken = $this->auth->authen($username, $password);
-                    return response()->json(['error'=>0, 'message' => __('hanoivip::auth.success'), 'data' => ['token' => $accessToken, 'expires' => Carbon::now()->timestamp]]);
+                    $user = $this->auth->getUserByToken($accessToken);
+                    return response()->json(['error'=>0, 'message' => __('hanoivip::auth.success'), 
+                        'data' => ['token' => $accessToken, 'expires' => Carbon::now()->addDays(30)->timestamp,  'app_user_id' => $user->getAuthIdentifier()]]);
                 }
                 else {
                     return view('hanoivip::auth.login', ['error' => __('hanoivip::auth.success')]);
@@ -177,7 +181,8 @@ class Ddd2 extends Controller
         $token = $request->input('access_token');
         $user = $this->auth->getUserByToken($token);
         return response()->json(['error'=>0, 'message'=>'info success', 
-            'data'=>['name' => $user->getAuthIdentifierName(), 'email' => $user->email, 'create_time' => $user->createTime]]);
+            'data'=>['name' => $user->getAuthIdentifierName(), 'email' => $user->email, 
+                'create_time' => $user->createTime, 'app_user_id' => $user->getAuthIdentifier()]]);
     }
     
     public function forgotPass(Request $request)
