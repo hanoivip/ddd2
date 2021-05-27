@@ -61,11 +61,12 @@ class IdpAuthen implements IDddAuthen
                 'email' => $userinfo['email'],
                 'user_name' => $userinfo['userName'],
                 'api_token' => $token,
+                'expires' => Carbon::now()->addDays(30),
                 'channel' => 0,
                 'create_time' => $userinfo['createTime']['time']
             ]);
             // cache it
-            Cache::put($token, $appUser, Carbon::now()->addDays(7));
+            Cache::put($token, $appUser, $appUser->expires);
             return $token;
         }
     }

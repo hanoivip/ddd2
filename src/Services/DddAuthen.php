@@ -36,11 +36,12 @@ class DddAuthen implements IDddAuthen
                 'email' => $account['email'],
                 'user_name' => $account['user_name'],
                 'api_token' => $token,
+                'expires' => Carbon::now()->addDays(30),
                 'channel' => 0,
                 'create_time' => 0, //$userinfo['createTime']['time']
             ]);
             Log::debug('Generated token:' . $token);
-            Cache::put($token, $account, Carbon::now()->addDays(7));
+            Cache::put($token, $account, $account->expires);
             return $token;
         }
     }

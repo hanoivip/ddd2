@@ -61,7 +61,8 @@ class Ddd2 extends Controller
                 {
                     $user = $this->auth->getUserByToken($accessToken);
                     return response()->json(['error'=>0, 'message'=>'login success', 
-                        'data'=>['token' => $accessToken, 'expires' => Carbon::now()->addDays(30)->timestamp, 'app_user_id' => $user->getAuthIdentifier()]]);   
+                        'data'=>['token' => $accessToken, 'expires' => $user->expires->timestamp, 
+                            'app_user_id' => $user->getAuthIdentifier()]]);   
                 }
                 else 
                 {
@@ -147,7 +148,8 @@ class Ddd2 extends Controller
                     $accessToken = $this->auth->authen($username, $password);
                     $user = $this->auth->getUserByToken($accessToken);
                     return response()->json(['error'=>0, 'message' => __('hanoivip::auth.success'), 
-                        'data' => ['token' => $accessToken, 'expires' => Carbon::now()->addDays(30)->timestamp,  'app_user_id' => $user->getAuthIdentifier()]]);
+                        'data' => ['token' => $accessToken, 'expires' => $user->expires->timestamp,  
+                            'app_user_id' => $user->getAuthIdentifier()]]);
                 }
                 else {
                     return view('hanoivip::auth.login', ['error' => __('hanoivip::auth.success')]);
