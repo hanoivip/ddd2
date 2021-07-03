@@ -70,6 +70,23 @@ class DddAuthen implements IDddAuthen
     {
         throw new Exception("Not support method");
     }
+    
+    public function bind($uid, $username, $password)
+    {
+        throw new Exception("Not supported method");
+    }
+    
+    public function changePassword($username, $newPassword)
+    {
+        throw new Exception("Not supported method");
+    }
+    
+    public function guest($device)
+    {
+        throw new Exception("Not supported method");
+    }
+
+
 
     
     

@@ -16,4 +16,7 @@ Route::middleware('api')->namespace('Hanoivip\Ddd2\Controllers')
         Route::any('/userinfo', 'Ddd2@doGetInfo');
         Route::any('/register', 'Ddd2@doRegister');
         Route::any('/logout', 'Ddd2@logout');
+        //quick play feature
+        Route::any('/guest', 'Ddd2@guest');
+        Route::any('/guest/bind', 'Ddd2@bind');
     });

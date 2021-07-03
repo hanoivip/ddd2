@@ -24,6 +24,8 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
     public $channel;
     
     public $createTime;
+	
+	public $device;
     
     public function __construct($data = null)
     {
@@ -36,6 +38,7 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
             $this->expires = $data['expires'];
             $this->channel = $data['channel'];
             $this->createTime = $data['create_time'];
+			$this->device = $data['device'];
         }
         else {
             $this->username = "";
@@ -45,6 +48,7 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
             $this->expires = 0;
             $this->channel = 0;
             $this->createTime = 0;
+			$this->device = "";
         }
     }
     

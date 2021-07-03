@@ -10,7 +10,7 @@ interface IDddAuthen
      * @param string $password
      * @return string|NULL Token string
      */
-    public function authen($username, $password);
+    public function authen($device, $username, $password);
     /**
      * 
      * @param string $token
@@ -22,5 +22,11 @@ interface IDddAuthen
      * @param string $username
      * @param string $password
      */
-    public function createUser($username, $password);
+    public function createUser($device, $username, $password);
+    
+    public function changePassword($username, $newPassword);
+    
+    public function guest($device);
+    
+    public function bind($device, $username, $password);
 }

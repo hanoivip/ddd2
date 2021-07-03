@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Mervick\CurlHelper;
 use Hanoivip\Ddd2\Models\AppUser;
+use Exception;
 
 /**
  * Authentication base on IDP
@@ -33,19 +34,19 @@ class IdpAuthen implements IDddAuthen
     }
 
     // udid + username + password + version + channel + isChannel + md5key;
-    public function authen($username, $password)
+    public function authen($device, $username, $password)
     {
         $version = config('ipd.version', '1.0.0');
         $channel = config('ipd.channel', '1000');
-        $id = Str::uuid();//device id!!! each device can not have more than 50 acc
+        //$device = Str::uuid();//device id!!! each device can not have more than 50 acc
         $request = [
             'username' => $username,
             'password' => $password,
             'channel' => $channel,
             'version' => $version,
-            'id' => $id,
+            'id' => $device,
             'isChannel' => 0,
-            'sign' => md5($id . $username . $password . $version . $channel . '0' . config('ipd.secret')),
+            'sign' => md5($device . $username . $password . $version . $channel . '0' . config('ipd.secret')),
         ];
         //$encrypt = $this->crypto->encrypt(json_encode($request), config('ipd.crypt'));
         //$data = $this->crypto->prepareForServlet($encrypt);
@@ -63,7 +64,8 @@ class IdpAuthen implements IDddAuthen
                 'api_token' => $token,
                 'expires' => Carbon::now()->addDays(30),
                 'channel' => 0,
-                'create_time' => $userinfo['createTime']['time']
+                'create_time' => $userinfo['createTime']['time'],
+				'device' => $device,
             ]);
             // cache it
             Cache::put($token, $appUser, $appUser->expires);
@@ -72,18 +74,18 @@ class IdpAuthen implements IDddAuthen
     }
     
     // udid + username + password + channel + md5key;
-    public function createUser($username, $password)
+    public function createUser($device, $username, $password)
     {
         $channel = config('ipd.channel', '1000');
-        $id = Str::uuid();//device id!!! each device can not have more than 50 acc
+        //$device = Str::uuid();//device id!!! each device can not have more than 50 acc
         $request = [
             'username' => $username,
             'password' => $password,
             'email' => '',
             'channel' => $channel,
-            'id' => $id,
+            'id' => $device,
             'isChannel' => 0,
-            'sign' => md5($id . $username . $password . $channel . config('ipd.secret')),
+            'sign' => md5($device . $username . $password . $channel . config('ipd.secret')),
         ];
         $uri = config('ipd.uri') . '/create?rdata=' . json_encode($request);
         $response = CurlHelper::factory($uri)->exec();
@@ -94,4 +96,21 @@ class IdpAuthen implements IDddAuthen
         }
         return __('hanoivip::auth.ipd.register.' . $response['data']['result']);
     }
+    
+    public function bind($device, $username, $password)
+    {
+        throw new Exception("Not supported method");
+    }
+
+    public function changePassword($username, $newPassword)
+    {
+        throw new Exception("Not supported method");
+    }
+    
+    public function guest($device)
+    {
+        throw new Exception("Not supported method");
+    }
+
+
 }
