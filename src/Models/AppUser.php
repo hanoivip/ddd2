@@ -11,6 +11,8 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
 {
     use Authorizable;
     
+    public $name;
+    
     public $username;
     
     public $email;
@@ -34,6 +36,7 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
             $this->id = $data['id'];
             $this->email = $data['email'];
             $this->username = $data['user_name'];
+            $this->name = $data['user_name'];
             $this->api_token = $data['api_token'];
             $this->expires = $data['expires'];
             $this->channel = $data['channel'];
@@ -42,6 +45,7 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
         }
         else {
             $this->username = "";
+            $this->name = "";
             $this->email = "";
             $this->id = 0;
             $this->api_token = "";

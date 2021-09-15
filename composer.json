@@ -27,7 +27,8 @@
 	"extra" : {
 		"laravel" : {
 			"providers" : [
-				"Hanoivip\\Ddd2\\AuthServiceProvider"
+				"Hanoivip\\Ddd2\\AuthServiceProvider",
+				"Hanoivip\\Ddd2\\EventServiceProvider"
 			]
 		}
 	}

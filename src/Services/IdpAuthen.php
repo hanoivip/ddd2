@@ -4,16 +4,20 @@ namespace Hanoivip\Ddd2\Services;
 
 use Carbon\Carbon;
 use Hanoivip\Ddd2\IDddAuthen;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cache;
-use Mervick\CurlHelper;
 use Hanoivip\Ddd2\Models\AppUser;
+use Hanoivip\Events\User\PassUpdated;
+use Hanoivip\User\User;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Mervick\CurlHelper;
 use Exception;
 
 /**
  * Authentication base on IDP
  * Traffic in text plain
  *
+ * 202109: cache user in database
  */
 class IdpAuthen implements IDddAuthen
 {
@@ -69,6 +73,21 @@ class IdpAuthen implements IDddAuthen
             ]);
             // cache it
             Cache::put($token, $appUser, $appUser->expires);
+            // cache user in db
+            $record = User::find($userinfo['id']);
+            if (!$record)
+            {
+                $record = new User();
+                $record->id = $userinfo['id'];
+                $record->name = $username;
+                $record->password = Hash::make($password);
+                $record->save();
+            }
+            else
+            {
+                $record->password = Hash::make($password);
+                $record->save();
+            }
             return $token;
         }
     }
@@ -92,7 +111,9 @@ class IdpAuthen implements IDddAuthen
         if (!empty($response['data']) && isset($response['data']['result']))
         {
             if ($response['data']['result'] == 200)
+            {
                 return true;
+            }
         }
         return __('hanoivip::auth.ipd.register.' . $response['data']['result']);
     }
@@ -104,7 +125,23 @@ class IdpAuthen implements IDddAuthen
 
     public function changePassword($username, $newPassword)
     {
-        throw new Exception("Not supported method");
+        $request = [
+            'username' => $username,
+            'password' => "",
+            'newpassword' => $newPassword,
+            'sign' => md5($username . $newPassword . config('ipd.secret')),
+        ];
+        $uri = config('ipd.uri') . '/modifyPassword?rdata=' . json_encode($request);
+        $response = CurlHelper::factory($uri)->exec();
+        Log::debug($response['content']);
+        if (!empty($response['data']) && isset($response['data']['result']))
+        {
+            if ($response['data']['result'] == 200)
+            {
+                return true;
+            }
+        }
+        return __('hanoivip::auth.ipd.register.' . $response['data']['result']);
     }
     
     public function guest($device)
@@ -112,5 +149,13 @@ class IdpAuthen implements IDddAuthen
         throw new Exception("Not supported method");
     }
 
+    public function handle(PassUpdated $event)
+    {
+		if ($event instanceof PassUpdated)
+		{
+			// Log::debug("We are gonna update accoutn password..." . print_r($event, true));
+			return $this->changePassword($event->username, $event->newpass);
+		}
+    }
 
 }

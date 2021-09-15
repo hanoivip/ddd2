@@ -22,7 +22,7 @@ class TokenToUserProvider implements UserProvider
     
     public function retrieveByToken($identifier, $token)
     {
-        Log::debug("TokenUserProvider retrieveByToken:" . $token);
+        //Log::debug("TokenUserProvider retrieveByToken:" . $token);
         $auth = app()->make(IDddAuthen::class);
         $user = $auth->getUserByToken($token);
         //Log::debug("TokenUserProvider retrieveByToken:" . print_r($user, true));

@@ -70,5 +70,10 @@ class AccessTokenGuard implements Guard
     public function validate(array $credentials = [])
     {
     }
+    
+    public function logout()
+    {
+        
+    }
 
 }
