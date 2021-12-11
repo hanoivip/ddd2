@@ -21,7 +21,7 @@ class DddAuthen implements IDddAuthen
      * @param string $password
      * @return string
      */
-    public function authen($username, $password)
+    public function authen($device, $username, $password)
     {
         $account = TabAccount::where('user_name', $username)
         ->where('password', $password)
@@ -66,7 +66,7 @@ class DddAuthen implements IDddAuthen
         }
     }
     
-    public function createUser($username, $password)
+    public function createUser($device, $username, $password)
     {
         throw new Exception("Not support method");
     }
@@ -85,9 +85,4 @@ class DddAuthen implements IDddAuthen
     {
         throw new Exception("Not supported method");
     }
-
-
-
-    
-    
 }

@@ -15,7 +15,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->publishes([
             __DIR__ . '/../config/ipd.php' => config_path('ipd.php'),
-            __DIR__ . '/../config/auth.php' => config_path('auth.php'),
+            __DIR__ . '/../config/ddd2.php' => config_path('ddd2.php'),
         ]);
         $this->loadRoutesFrom(__DIR__ . '/../route/api.php');
         $this->loadRoutesFrom(__DIR__ . '/../route/routes.php');
