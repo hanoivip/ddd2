@@ -66,13 +66,13 @@ class Ddd2 extends Controller
                 }
                 else
                 {
-                    Cookie::queue(Cookie::make('access_token',  $accessToken));
+                    //Cookie::queue(Cookie::make('access_token',  $accessToken));
                     $redirect = $request->get('redirect');
                     if (!empty($redirect))
                     {
                         return response()->redirectTo($redirect);
                     }
-                    return redirect()->route('home');
+                    return redirect()->route('login-success');
                 }
             }
             else
@@ -106,13 +106,13 @@ class Ddd2 extends Controller
         else
         {
             $request->session()->invalidate();
-            return view('hanoivip::landing');
+            return redirect()->route('logout-success');
         }
     }
     
     public function onLogout(Request $request)
     {
-        return view('hanoivip::landing');
+        return view('hanoivip::auth.logout-success');
     }
     
     public function register(Request $request)
@@ -155,7 +155,7 @@ class Ddd2 extends Controller
                         'data' => []]);
                 }
                 else {
-                    return view('hanoivip::auth.login', ['error' => __('hanoivip::auth.success')]);
+                    return redirect()->route('register-success');
                 }
             }   
             else {

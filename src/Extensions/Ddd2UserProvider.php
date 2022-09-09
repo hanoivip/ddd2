@@ -20,7 +20,7 @@ class Ddd2UserProvider implements UserProvider
     
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
-        Log::debug('IpdUserProvider...validateCredentials');
+        //Log::debug('IpdUserProvider...validateCredentials');
         //Log::debug(print_r($user, true));
         //Log::debug(print_r($credentials, true));
         $other = $this->retrieveByCredentials($credentials);
@@ -42,7 +42,7 @@ class Ddd2UserProvider implements UserProvider
 
     public function retrieveByCredentials(array $credentials)
     {
-        Log::debug('IpdUserProvider...retrieveByCredentials');
+        //Log::debug('IpdUserProvider...retrieveByCredentials');
         $username = $credentials['username'];
         $password = $credentials['password'];
         $device = $credentials['device'];
