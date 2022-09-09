@@ -55,7 +55,7 @@ class DddAuthen implements IDddAuthen
      */
     public function getUserByToken($token)
     {
-        Log::debug('Get user by token:' . $token);
+        //Log::debug('Get user by token:' . $token);
         if (Cache::has($token))
         {
             return Cache::get($token);
@@ -66,23 +66,24 @@ class DddAuthen implements IDddAuthen
         }
     }
     
-    public function createUser($device, $username, $password)
+    public function getUserById($id)
     {
-        throw new Exception("Not support method");
+        throw new Exception("TODO: implement getUserById");
     }
     
-    public function bind($uid, $username, $password)
+    public function createUser($device, $username, $password)
     {
-        throw new Exception("Not supported method");
+        throw new Exception("TODO: implement createUser");
     }
     
     public function changePassword($username, $newPassword)
     {
-        throw new Exception("Not supported method");
+        throw new Exception("TODO: implement changePassword");
     }
     
-    public function guest($device)
+    public function logout($token)
     {
-        throw new Exception("Not supported method");
+        if (Cache::has($token))
+            Cache::forget($token);
     }
 }

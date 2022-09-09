@@ -42,7 +42,6 @@ class IdpAuthen implements IDddAuthen
     {
         $version = config('ipd.version', '1.0.0');
         $channel = config('ipd.channel', '1000');
-        //$device = Str::uuid();//device id!!! each device can not have more than 50 acc
         $request = [
             'username' => $username,
             'password' => $password,
@@ -52,8 +51,6 @@ class IdpAuthen implements IDddAuthen
             'isChannel' => 0,
             'sign' => md5($device . $username . $password . $version . $channel . '0' . config('ipd.secret')),
         ];
-        //$encrypt = $this->crypto->encrypt(json_encode($request), config('ipd.crypt'));
-        //$data = $this->crypto->prepareForServlet($encrypt);
         // Http POST
         $uri = config('ipd.uri') . '/load?rdata=' . json_encode($request);
         $response = CurlHelper::factory($uri)->exec();
@@ -69,7 +66,7 @@ class IdpAuthen implements IDddAuthen
                 'expires' => Carbon::now()->addDays(30),
                 'channel' => 0,
                 'create_time' => $userinfo['createTime']['time'],
-				'device' => $device,
+                'device' => $userinfo['udid'],
             ]);
             // cache it
             Cache::put($token, $appUser, $appUser->expires);
@@ -96,7 +93,6 @@ class IdpAuthen implements IDddAuthen
     public function createUser($device, $username, $password)
     {
         $channel = config('ipd.channel', '1000');
-        //$device = Str::uuid();//device id!!! each device can not have more than 50 acc
         $request = [
             'username' => $username,
             'password' => $password,
@@ -116,11 +112,6 @@ class IdpAuthen implements IDddAuthen
             }
         }
         return __('hanoivip::auth.ipd.register.' . $response['data']['result']);
-    }
-    
-    public function bind($device, $username, $password)
-    {
-        throw new Exception("Not supported method");
     }
 
     public function changePassword($username, $newPassword)
@@ -143,11 +134,6 @@ class IdpAuthen implements IDddAuthen
         }
         return __('hanoivip::auth.ipd.register.' . $response['data']['result']);
     }
-    
-    public function guest($device)
-    {
-        throw new Exception("Not supported method");
-    }
 
     public function handle(PassUpdated $event)
     {
@@ -157,5 +143,41 @@ class IdpAuthen implements IDddAuthen
 			return $this->changePassword($event->username, $event->newpass);
 		}
     }
+    
+    public function getUserById($id)
+    {
+        $version = config('ipd.version', '1.0.0');
+        $channel = config('ipd.channel', '1000');
+        $request = [
+            'channel' => $channel,
+            'version' => $version,
+            'id' => $id,
+            'sign' => md5($id . $version . $channel . '1' . config('ipd.secret')),
+        ];
+        // Http POST
+        $uri = config('ipd.uri') . '/load?idata=' . json_encode($request);
+        $response = CurlHelper::factory($uri)->exec();
+        if (!empty($response['data']) && isset($response['data']['token']))
+        {
+            $token = $response['data']['token'];
+            $userinfo = $response['data']['userInfo'];
+            $appUser = new AppUser([
+                'id' => $userinfo['id'],
+                'email' => $userinfo['email'],
+                'user_name' => $userinfo['userName'],
+                'api_token' => $token,
+                'expires' => Carbon::now()->addDays(30),
+                'channel' => 0,
+                'create_time' => $userinfo['createTime']['time'],
+                'device' => $userinfo['udid'],
+            ]);
+            return $appUser;
+        }
+    }
 
+    public function logout($token)
+    {
+        if (Cache::has($token))
+            Cache::forget($token);
+    }
 }

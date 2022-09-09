@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 use Carbon\Carbon;
-
+use Hanoivip\User\Facades\DeviceFacade;
+use Illuminate\Auth\Events\Login;
+use Hanoivip\Ddd2\Requests\LoginRequest;
 
 class Ddd2 extends Controller
 {
@@ -25,7 +27,16 @@ class Ddd2 extends Controller
     {
         if (Auth::check())
             return redirect('/');
-        return view('hanoivip::auth.login');
+        return $this->loginWithRedirect($request);
+    }
+    
+    private function loginWithRedirect(Request $request, $data = [])
+    {
+        $redirect = '';
+        if ($request->has('redirect'))
+            $redirect = $request->get('redirect');
+        $data['redirect'] = $redirect;
+        return view('hanoivip::auth.login', $data);
     }
     
     private function validateLogin($request)
@@ -36,52 +47,53 @@ class Ddd2 extends Controller
         ]);
     }
     
-    public function doLogin(Request $request)
+    public function doLogin(LoginRequest $request)
     {
-        $validator = $this->validateLogin($request);
-        if ($validator->fails())
-        {
-            if ($request->expectsJson())
-            {
-                return response()->json(['error'=>1, 'message' => 'Thông tin đăng ký không hợp lệ!', 'data' => $validator->errors()]);
-            }
-            else
-            {
-                return redirect()->route('login')->withErrors($validator)->withInput();
-            }
-        }
-        $device = $request->input('device');
-        if (empty($device)) $device = Str::uuid();
+        $device = $request->get('device');
         $username = $request->input('username');
         $password = $request->input('password');
         Log::debug("Ddd2 user is logining {$username}");
-        try 
+        try
         {
-            $accessToken = $this->auth->authen($device, $username, $password);
+            $accessToken = $this->auth->authen($device->deviceId, $username, $password);
             if (!empty($accessToken))
             {
+                $user = $this->auth->getUserByToken($accessToken);
+                DeviceFacade::mapUserDevice($device, $user->getAuthIdentifier(), $accessToken);
+                event(new Login("ddd2", $user, true));
                 if ($request->expectsJson())
                 {
-                    $user = $this->auth->getUserByToken($accessToken);
-                    return response()->json(['error'=>0, 'message'=>'login success', 
-                        'data'=>['token' => $accessToken, 'expires' => $user->expires->timestamp, 
-                            'app_user_id' => $user->getAuthIdentifier()]]);   
+                    return response()->json([
+                        'error'=>0,
+                        'message'=>'login success',
+                        'data'=>[
+                            'token' => $accessToken,
+                            'expires' => $user->expires->timestamp,
+                            'app_user_id' => $user->getAuthIdentifier()
+                        ]]);
                 }
-                else 
+                else
                 {
                     Cookie::queue(Cookie::make('access_token',  $accessToken));
-                    return view('hanoivip::landing');
+                    $redirect = $request->get('redirect');
+                    if (!empty($redirect))
+                    {
+                        return response()->redirectTo($redirect);
+                    }
+                    return redirect()->route('home');
                 }
             }
             else
             {
                 if ($request->expectsJson())
-                    return response()->json(['error'=>1, 'message'=> __('hanoivip::auth.failed'), 'data'=>[]]);
+                    return response()->json(['error'=>1, 'message'=> __('hanoivip::auth.failed')]);
                 else
-                    return view('hanoivip::auth.login', ['error' => __('hanoivip::auth.failed')]);
+                {
+                    return $this->loginWithRedirect($request, ['error' => __('hanoivip::auth.failed')]);
+                }
             }
-        } 
-        catch (Exception $e) 
+        }
+        catch (Exception $e)
         {
             Log::error("Ddd2 login ex:" . $e->getMessage());
             if ($request->expectsJson())
@@ -89,7 +101,6 @@ class Ddd2 extends Controller
             else
                 return view('hanoivip::auth.login-exception');
         }
-        
     }
     
     public function logout(Request $request)
@@ -141,20 +152,25 @@ class Ddd2 extends Controller
                 return redirect()->route('register')->withErrors($validator)->withInput();
             }
         }
-        $device = $request->input('device');
-        if (empty($device)) $device = Str::uuid();
+        $device = $request->get('device');
         $username = $request->input('username');
         $password = $request->input('password');
         try {
-            $result = $this->auth->createUser($device, $username, $password);
+            $result = $this->auth->createUser($device->deviceId, $username, $password);
             if ($result === true) {
+                $accessToken = $this->auth->authen($device->deviceId, $username, $password);
+                $user = $this->auth->getUserByToken($accessToken);
+                DeviceFacade::mapUserDevice($device, $user->getAuthIdentifier(), $accessToken);
+                event(new Login("ddd2", $user, true));
                 if ($request->expectsJson()) {
-                    //auto login for this client
-                    $accessToken = $this->auth->authen($device, $username, $password);
-                    $user = $this->auth->getUserByToken($accessToken);
-                    return response()->json(['error'=>0, 'message' => __('hanoivip::auth.success'), 
-                        'data' => ['token' => $accessToken, 'expires' => $user->expires->timestamp,  
-                            'app_user_id' => $user->getAuthIdentifier()]]);
+                    return response()->json([
+                        'error'=>0, 
+                        'message' => __('hanoivip::auth.success'), 
+                        'data' => [
+                            'token' => $accessToken, 
+                            'expires' => $user->expires->timestamp,  
+                            'app_user_id' => $user->getAuthIdentifier()
+                        ]]);
                 }
                 else {
                     return view('hanoivip::auth.login', ['error' => __('hanoivip::auth.success')]);
