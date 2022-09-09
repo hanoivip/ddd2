@@ -9,23 +9,28 @@ use Illuminate\Support\Facades\Log;
 use Hanoivip\Events\UserLogin;
 use Hanoivip\Ddd2\IDddAuthen;
 
-class IpdUserProvider implements UserProvider
+class Ddd2UserProvider implements UserProvider
 {
-    public function __construct()
+    private $auth;
+    
+    public function __construct(IDddAuthen $auth)
     {   
+        $this->auth = $auth;
     }
     
     public function validateCredentials(Authenticatable $user, array $credentials)
     {
-        Log::debug('TODO: IpdUserProvider...validateCredentials');
+        Log::debug('IpdUserProvider...validateCredentials');
+        //Log::debug(print_r($user, true));
+        //Log::debug(print_r($credentials, true));
+        $other = $this->retrieveByCredentials($credentials);
+        return $user->getAuthIdentifier() == $other->getAuthIdentifier();
     }
     
     public function retrieveByToken($identifier, $token)
     {
         //Log::debug("TokenUserProvider retrieveByToken:" . $token);
-        $auth = app()->make(IDddAuthen::class);
-        $user = $auth->getUserByToken($token);
-        //Log::debug("TokenUserProvider retrieveByToken:" . print_r($user, true));
+        $user = $this->auth->getUserByToken($token);
         if (!empty($user) && $user->getAuthIdentifier() > 0)
         {
             $uid = $user->getAuthIdentifier();
@@ -37,7 +42,20 @@ class IpdUserProvider implements UserProvider
 
     public function retrieveByCredentials(array $credentials)
     {
-        Log::debug('TODO: IpdUserProvider...retrieveByCredentials');
+        Log::debug('IpdUserProvider...retrieveByCredentials');
+        $username = $credentials['username'];
+        $password = $credentials['password'];
+        $device = $credentials['device'];
+        $token = $this->auth->authen($device, $username, $password);
+        $user = $this->auth->getUserByToken($token);
+        if (!empty($user) && $user->getAuthIdentifier() > 0)
+        {
+            $uid = $user->getAuthIdentifier();
+            if (!empty($uid))
+                event(new UserLogin($uid));
+            //Log::debug(print_r($user, true));
+            return $user;
+        }
     }
 
     public function retrieveById($identifier)

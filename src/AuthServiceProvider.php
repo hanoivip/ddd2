@@ -5,7 +5,7 @@ namespace Hanoivip\Ddd2;
 use Hanoivip\Ddd2\Extensions\TokenToUserProvider;
 use Hanoivip\Ddd2\Extensions\AccessTokenGuard;
 use Hanoivip\Ddd2\Extensions\DbUserProvider;
-use Hanoivip\Ddd2\Extensions\IpdUserProvider;
+use Hanoivip\Ddd2\Extensions\Ddd2UserProvider;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Hanoivip\Ddd2\Services\DddAuthen;
@@ -25,21 +25,14 @@ class AuthServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../views', 'hanoivip');
         $this->loadTranslationsFrom( __DIR__.'/../lang', 'hanoivip');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        // add custom guard: 'passport'
-        Auth::provider('ddd2', function ($app, array $config) {
-            return new TokenToUserProvider();
-        });
-        // add custom guard: IDddAuthen
-        Auth::extend('access_token', function ($app, $name, array $config) {
-            $userProvider = app("Ddd2UserProvider");
-            $request = app('request');
-            return new AccessTokenGuard($userProvider, $request, $config);
-        });
-            // add custom guard: IDddAuthen with 2fa
+        // add custom guard: IDddAuthen with 2fa
         Auth::extend('device_token', function ($app, $name, array $config) {
             $userProvider = app("Ddd2UserProvider");
             $request = app('request');
             return new DeviceTokenGuard($userProvider, $request, $config);
+        });
+        Auth::provider('ipd_users', function ($app, array $config) {
+            return new Ddd2UserProvider($app->make(IDddAuthen::class));
         });
     }
     

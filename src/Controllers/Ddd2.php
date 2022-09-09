@@ -25,8 +25,6 @@ class Ddd2 extends Controller
     
     public function login(Request $request)
     {
-        if (Auth::check())
-            return redirect('/');
         return $this->loginWithRedirect($request);
     }
     
@@ -39,14 +37,6 @@ class Ddd2 extends Controller
         return view('hanoivip::auth.login', $data);
     }
     
-    private function validateLogin($request)
-    {
-        return Validator::make($request->all(), [
-            'username' => ['required', 'string', 'min:6', 'max:32'],
-            'password' => ['required', 'string', 'min:6'],
-        ]);
-    }
-    
     public function doLogin(LoginRequest $request)
     {
         $device = $request->get('device');
@@ -55,10 +45,12 @@ class Ddd2 extends Controller
         Log::debug("Ddd2 user is logining {$username}");
         try
         {
-            $accessToken = $this->auth->authen($device->deviceId, $username, $password);
-            if (!empty($accessToken))
+            $result = Auth::attempt(['username' => $username, 'password' => $password, 'device' => $device->deviceId]);
+            if (!empty($result))
             {
-                $user = $this->auth->getUserByToken($accessToken);
+                $user = Auth::user();
+                // self-generate token
+                $accessToken = Str::random(16);
                 DeviceFacade::mapUserDevice($device, $user->getAuthIdentifier(), $accessToken);
                 event(new Login("ddd2", $user, true));
                 if ($request->expectsJson())
@@ -68,7 +60,7 @@ class Ddd2 extends Controller
                         'message'=>'login success',
                         'data'=>[
                             'token' => $accessToken,
-                            'expires' => $user->expires->timestamp,
+                            'expires' => Carbon::now()->addDays(30)->timestamp,
                             'app_user_id' => $user->getAuthIdentifier()
                         ]]);
                 }
@@ -105,19 +97,17 @@ class Ddd2 extends Controller
     
     public function logout(Request $request)
     {
-        if (!Auth::check())
-        {
-            if ($request->expectsJson())
-                return response()->json(['error'=>1, 'message'=>'not login yet', 'data'=>[]]);
-            else
-                return redirect('/');
-        }
-        Cookie::queue(Cookie::forget('access_token'));
-        Cookie::queue(Cookie::forget('laravel_session'));
+        Auth::guard()->logout();
+        
         if ($request->expectsJson())
+        {
             return response()->json(['error'=>0, 'message'=>'logout success', 'data'=>[]]);
+        }
         else
+        {
+            $request->session()->invalidate();
             return view('hanoivip::landing');
+        }
     }
     
     public function onLogout(Request $request)
@@ -158,19 +148,11 @@ class Ddd2 extends Controller
         try {
             $result = $this->auth->createUser($device->deviceId, $username, $password);
             if ($result === true) {
-                $accessToken = $this->auth->authen($device->deviceId, $username, $password);
-                $user = $this->auth->getUserByToken($accessToken);
-                DeviceFacade::mapUserDevice($device, $user->getAuthIdentifier(), $accessToken);
-                event(new Login("ddd2", $user, true));
                 if ($request->expectsJson()) {
                     return response()->json([
                         'error'=>0, 
                         'message' => __('hanoivip::auth.success'), 
-                        'data' => [
-                            'token' => $accessToken, 
-                            'expires' => $user->expires->timestamp,  
-                            'app_user_id' => $user->getAuthIdentifier()
-                        ]]);
+                        'data' => []]);
                 }
                 else {
                     return view('hanoivip::auth.login', ['error' => __('hanoivip::auth.success')]);
@@ -265,4 +247,15 @@ class Ddd2 extends Controller
     {
         return $this->doRegister($request);
     }
+    
+    public function onLoginSuccess(Request $request)
+    {
+        return view('hanoivip::auth.login-success');
+    }
+    
+    public function onRegisterSuccess(Request $request)
+    {
+        return view('hanoivip::auth.register-success');
+    }
+    
 }

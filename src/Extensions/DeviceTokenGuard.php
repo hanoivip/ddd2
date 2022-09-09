@@ -39,7 +39,7 @@ class DeviceTokenGuard implements Guard
             if (!empty($record))
             {
                 $userId = $record->user_id;
-                $user = $this->provider->retrieveByToken($userId, $token);
+                $user = $this->provider->retrieveById($userId);
                 if (TwofaFacade::getStatus($userId) &&
                     TwofaFacade::needVerifyDevice($userId, $deviceInfo))
                 {
