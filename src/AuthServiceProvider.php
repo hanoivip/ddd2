@@ -2,9 +2,6 @@
 
 namespace Hanoivip\Ddd2;
 
-use Hanoivip\Ddd2\Extensions\TokenToUserProvider;
-use Hanoivip\Ddd2\Extensions\AccessTokenGuard;
-use Hanoivip\Ddd2\Extensions\DbUserProvider;
 use Hanoivip\Ddd2\Extensions\Ddd2UserProvider;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Auth;
@@ -41,12 +38,12 @@ class AuthServiceProvider extends ServiceProvider
         if (config('ddd2.auth') == 'ipd')
         {
             $this->app->bind(IDddAuthen::class, IdpAuthen::class);
-            $this->app->bind('Ddd2UserProvider', IpdUserProvider::class);
+            $this->app->bind('Ddd2UserProvider', Ddd2UserProvider::class);
         }
         else
         {
             $this->app->bind(IDddAuthen::class, DddAuthen::class);
-            $this->app->bind('Ddd2UserProvider', DbUserProvider::class);
+            $this->app->bind('Ddd2UserProvider', Ddd2UserProvider::class);
         }
     }
 }
