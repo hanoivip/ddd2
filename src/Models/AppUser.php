@@ -28,6 +28,9 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
     public $createTime;
 	
 	public $device;
+	
+	// for language support, akaunting\laravel-language
+	public $locale;
     
     public function __construct($data = null)
     {
