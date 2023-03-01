@@ -118,6 +118,11 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
     public function setAttribute($key, $value)
     {
         Log::debug("AppUser set attribute request $key $value");
+        return $this;
     }
     
+    public function save()
+    {
+        Log::debug("AppUser save?");
+    }
 }
