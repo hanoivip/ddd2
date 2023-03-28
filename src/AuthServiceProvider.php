@@ -20,7 +20,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/../route/api.php');
         $this->loadRoutesFrom(__DIR__ . '/../route/routes.php');
         $this->loadViewsFrom(__DIR__ . '/../views', 'hanoivip');
-        $this->loadTranslationsFrom( __DIR__.'/../lang', 'hanoivip');
+        $this->loadTranslationsFrom( __DIR__.'/../lang', 'hanoivip.ddd2');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         // add custom guard: IDddAuthen with 2fa
         Auth::extend('device_token', function ($app, $name, array $config) {

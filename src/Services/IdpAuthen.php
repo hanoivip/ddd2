@@ -111,7 +111,7 @@ class IdpAuthen implements IDddAuthen
                 return true;
             }
         }
-        return __('hanoivip::auth.ipd.register.' . $response['data']['result']);
+        return __('hanoivip.ddd2::auth.ipd.register.' . $response['data']['result']);
     }
 
     public function changePassword($username, $newPassword)
@@ -132,7 +132,7 @@ class IdpAuthen implements IDddAuthen
                 return true;
             }
         }
-        return __('hanoivip::auth.ipd.register.' . $response['data']['result']);
+        return __('hanoivip.ddd2::auth.ipd.register.' . $response['data']['result']);
     }
 
     public function handle(PassUpdated $event)

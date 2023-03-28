@@ -78,10 +78,10 @@ class Ddd2 extends Controller
             else
             {
                 if ($request->expectsJson())
-                    return response()->json(['error'=>1, 'message'=> __('hanoivip::auth.failed')]);
+                    return response()->json(['error'=>1, 'message'=> __('hanoivip.ddd2::auth.failed')]);
                 else
                 {
-                    return $this->loginWithRedirect($request, ['error' => __('hanoivip::auth.failed')]);
+                    return $this->loginWithRedirect($request, ['error' => __('hanoivip.ddd2::auth.failed')]);
                 }
             }
         }
@@ -151,7 +151,7 @@ class Ddd2 extends Controller
                 if ($request->expectsJson()) {
                     return response()->json([
                         'error'=>0, 
-                        'message' => __('hanoivip::auth.success'), 
+                        'message' => __('hanoivip.ddd2::auth.success'), 
                         'data' => []]);
                 }
                 else {
@@ -228,9 +228,9 @@ class Ddd2 extends Controller
             else
             {
                 if ($request->expectsJson())
-                    return response()->json(['error'=>1, 'message'=> __('hanoivip::auth.failed'), 'data'=>[]]);
+                    return response()->json(['error'=>1, 'message'=> __('hanoivip.ddd2::auth.failed'), 'data'=>[]]);
                     else
-                        return view('hanoivip::auth.login', ['error' => __('hanoivip::auth.failed')]);
+                        return view('hanoivip::auth.login', ['error' => __('hanoivip.ddd2::auth.failed')]);
             }
         }
         catch (Exception $e)
