@@ -26,7 +26,7 @@ class Ddd2UserProvider implements UserProvider
     
     public function retrieveByToken($identifier, $token)
     {
-        Log::debug("Ddd2UserProvider retrieveByToken:" . $token);
+        //Log::debug("Ddd2UserProvider retrieveByToken:" . $token);
         if (Cache::has("ddd2_token_$token"))
         {
             return Cache::get("ddd2_token_$token");
@@ -43,7 +43,7 @@ class Ddd2UserProvider implements UserProvider
 
     public function retrieveByCredentials(array $credentials)
     {
-        Log::debug('Ddd2UserProvider...retrieveByCredentials');
+        //Log::debug('Ddd2UserProvider...retrieveByCredentials');
         $username = $credentials['username'];
         $password = $credentials['password'];
         $device = $credentials['device'];
@@ -68,7 +68,7 @@ class Ddd2UserProvider implements UserProvider
 
     public function retrieveById($identifier)
     {
-        Log::debug('Ddd2UserProvider...retrieveById');
+        //Log::debug('Ddd2UserProvider...retrieveById');
         if (Cache::has("ddd2_userid_$identifier"))
         {
             return Cache::get("ddd2_userid_$identifier");
@@ -86,7 +86,7 @@ class Ddd2UserProvider implements UserProvider
 
     public function updateRememberToken(Authenticatable $user, $token)
     {
-        Log::debug('TODO: Ddd2UserProvider...updateRememberToken');
+        //Log::debug('TODO: Ddd2UserProvider...updateRememberToken');
     }
     
 }
