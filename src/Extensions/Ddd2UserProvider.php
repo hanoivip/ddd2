@@ -27,6 +27,10 @@ class Ddd2UserProvider implements UserProvider
     public function retrieveByToken($identifier, $token)
     {
         Log::debug("Ddd2UserProvider retrieveByToken:" . $token);
+        if (Cache::has("ddd2_token_$token"))
+        {
+            return Cache::get("ddd2_token_$token");
+        }
         $user = $this->auth->getUserByToken($token);
         if (!empty($user) && $user->getAuthIdentifier() > 0)
         {
@@ -55,8 +59,9 @@ class Ddd2UserProvider implements UserProvider
             $uid = $user->getAuthIdentifier();
             if (!empty($uid))
                 event(new UserLogin($uid));
-            Cache::put("ddd2_userid_$uid", $user, now()->addMinutes(30));
-            Cache::put("ddd2_hash_$hash", $user, now()->addMinutes(30));
+            Cache::put("ddd2_userid_$uid", $user, now()->addMinutes(60));
+            Cache::put("ddd2_hash_$hash", $user, now()->addMinutes(60));
+            Cache::put("ddd2_token_$token", $user, now()->addMinutes(60));
             return $user;
         }
     }
