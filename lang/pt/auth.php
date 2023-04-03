@@ -1,17 +1,17 @@
 <?php
 
 return [
-    'failed' => 'Login failure! Please check your username and password.',
-    'success' => 'Registration success!',
-    'throttle' => 'Login failure multiple times. Wait :seconds then retry!',
+    'failed' => 'Falha no login! Por favor, verifique seu usuário e senha.',
+    'success' => 'Registro realizado com sucesso!',
+    'throttle' => 'Falha de login várias vezes. Aguarde :seconds e tente novamente!',
     'ipd' => [
         'login' => [
             'success' => ''
         ],
         'register' => [
-            '200' => 'Registration success',
-            '400' => 'Account was taken. Please choose another username',
-            '500' => 'Registration error. Please check your username & password! (Length must be at least 6)'
+            '200' => 'Registro com sucesso',
+            '400' => 'A conta foi tomada. Escolha outro nome de usuário',
+            '500' => 'Erro de registro. Verifique seu nome de usuário e senha! (O comprimento deve ser de pelo menos 6)'
         ]
     ]
 ];
