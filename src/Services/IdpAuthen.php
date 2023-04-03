@@ -42,6 +42,7 @@ class IdpAuthen implements IDddAuthen
     {
         $version = config('ipd.version', '1.0.0');
         $channel = config('ipd.channel', '1000');
+        $device = substr($device, 0,50);
         $request = [
             'username' => $username,
             'password' => $password,
@@ -93,6 +94,7 @@ class IdpAuthen implements IDddAuthen
     public function createUser($device, $username, $password)
     {
         $channel = config('ipd.channel', '1000');
+        $device = substr($device,0,50);
         $request = [
             'username' => $username,
             'password' => $password,

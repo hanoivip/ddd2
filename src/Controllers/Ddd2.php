@@ -132,6 +132,7 @@ class Ddd2 extends Controller
     {
         $validator = $this->validateRegister($request);
         if ($validator->fails()) 
+        //if (false)
         {
             if ($request->expectsJson())
             {
@@ -143,10 +144,12 @@ class Ddd2 extends Controller
             }
         }
         $device = $request->get('device');
+        Log::debug(print_r($device, true));
         $username = $request->input('username');
         $password = $request->input('password');
         try {
             $result = $this->auth->createUser($device->deviceId, $username, $password);
+            Log::debug(print_r($result, true));
             if ($result === true) {
                 if ($request->expectsJson()) {
                     return response()->json([
