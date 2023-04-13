@@ -57,22 +57,19 @@ class DeviceTokenGuard implements Guard
      */
     public function getTokenForRequest () {
         $token = $this->request->query($this->inputKey);
-        //Log::debug('... xxx ' . print_r($this->request, true));
-        
         if (empty($token)) {
             $token = $this->request->input($this->inputKey);
         }
-        
         if (empty($token)) {
             $token = $this->request->bearerToken();
         }
-        
-        if (empty($token))
-        {
-            //Log::debug('...' . print_r($this->request->cookies, true));
+        if (empty($token)) {
             $token = $this->request->cookies->get($this->inputKey);
         }
-        
+        if (empty($token) && $this->request->hasHeader($this->inputKey))
+        {
+            $token = $this->request->header($this->inputKey);
+        }
         return $token;
     }
 
