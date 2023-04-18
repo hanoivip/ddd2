@@ -77,7 +77,8 @@ class IdpAuthen implements IDddAuthen
             {
                 $record = new User();
                 $record->id = $userinfo['id'];
-                $record->name = $username;
+                // IPD case sensitive but laravel users base incase sensitive
+                $record->name = md5($username);
                 $record->password = Hash::make($password);
                 $record->save();
             }

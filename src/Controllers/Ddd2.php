@@ -89,6 +89,7 @@ class Ddd2 extends Controller
         catch (Exception $e)
         {
             Log::error("Ddd2 login ex:" . $e->getMessage());
+            report($e);
             if ($request->expectsJson())
                 return response()->json(['error'=>2, 'message'=>'Ddd2 login exception!', 'data'=>[]]);
             else
