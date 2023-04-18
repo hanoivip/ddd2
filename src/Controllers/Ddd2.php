@@ -81,7 +81,8 @@ class Ddd2 extends Controller
                     return response()->json(['error'=>1, 'message'=> __('hanoivip.ddd2::auth.failed')]);
                 else
                 {
-                    return $this->loginWithRedirect($request, ['error' => __('hanoivip.ddd2::auth.failed')]);
+                    //return back()->withInput()->withErrors(['username' => __('hanoivip.ddd2::auth.failed')]);
+                    return view('hanoivip::auth.login', ['error_message' => __('hanoivip.ddd2::auth.failed')]);
                 }
             }
         }
@@ -132,7 +133,6 @@ class Ddd2 extends Controller
     {
         $validator = $this->validateRegister($request);
         if ($validator->fails()) 
-        //if (false)
         {
             if ($request->expectsJson())
             {
@@ -144,7 +144,7 @@ class Ddd2 extends Controller
             }
         }
         $device = $request->get('device');
-        Log::debug(print_r($device, true));
+        //Log::debug(print_r($device, true));
         $username = $request->input('username');
         $password = $request->input('password');
         try {
@@ -166,7 +166,7 @@ class Ddd2 extends Controller
                     return response()->json(['error'=>2, 'message' => $result, 'data' => []]);
                 }
                 else {
-                    return view('hanoivip::auth.register', ['error' => $result ]);
+                    return view('hanoivip::auth.register', ['error_message' => $result ]);
                 }
             }
         } catch (Exception $e) {
@@ -175,7 +175,7 @@ class Ddd2 extends Controller
                 return response()->json(['error'=>3, 'message' => "Registration exception", 'data' => []]);
             }
             else {
-                return view('hanoivip::auth.register', ['error' => "Registration exception" ]);
+                return view('hanoivip::auth.register', ['error_message' => "Registration exception" ]);
             }
         }
     }
