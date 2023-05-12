@@ -121,7 +121,7 @@ class IdpAuthen implements IDddAuthen
     {
         $request = [
             'uid' => $uid,
-            'password' => "abcdef",
+            'password' => "",
             'newpassword' => $newPassword,
             'sign' => md5($uid . $newPassword . config('ipd.secret')),
         ];
