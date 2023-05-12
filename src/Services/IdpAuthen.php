@@ -117,13 +117,13 @@ class IdpAuthen implements IDddAuthen
         return __('hanoivip.ddd2::auth.ipd.register.' . $response['data']['result']);
     }
 
-    public function changePassword($username, $newPassword)
+    public function changePassword($uid, $newPassword)
     {
         $request = [
-            'username' => $username,
-            'password' => "",
+            'uid' => $uid,
+            'password' => "abcdef",
             'newpassword' => $newPassword,
-            'sign' => md5($username . $newPassword . config('ipd.secret')),
+            'sign' => md5($uid . $newPassword . config('ipd.secret')),
         ];
         $uri = config('ipd.uri') . '/modifyPassword?rdata=' . json_encode($request);
         $response = CurlHelper::factory($uri)->exec();
@@ -142,8 +142,8 @@ class IdpAuthen implements IDddAuthen
     {
 		if ($event instanceof PassUpdated)
 		{
-			// Log::debug("We are gonna update accoutn password..." . print_r($event, true));
-			return $this->changePassword($event->username, $event->newpass);
+			Log::debug("We are gonna update accoutn password..." . print_r($event, true));
+			return $this->changePassword($event->uid, $event->newpass);
 		}
     }
     
