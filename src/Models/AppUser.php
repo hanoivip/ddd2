@@ -32,6 +32,10 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
 	
 	// for language support, akaunting\laravel-language
 	public $locale;
+	
+	// chatify
+	public $dark_mode;
+	public $avatar;
     
     public function __construct($data = null)
     {
