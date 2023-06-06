@@ -4,6 +4,7 @@ namespace Hanoivip\Ddd2\Models;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 //use Illuminate\Database\Eloquent\Model;
 use Hanoivip\Ddd2\IDddAuthen;
@@ -50,6 +51,7 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
             $this->channel = $data['channel'];
             $this->createTime = $data['create_time'];
 			$this->device = $data['device'];
+			$this->locale = $this->getAttribute('locale', 'en');
         }
         else {
             $this->username = "";
@@ -76,6 +78,7 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
             $this->api_token = $arr_user['api_token'];
             $this->channel = $arr_user['channel'];
             $this->createTime = $arr_user['create_time'];
+            $this->locale = $this->getAttribute('locale', 'en');
             return $this;
         }
     }
@@ -121,12 +124,25 @@ class AppUser implements AuthenticatableContract, AuthorizableContract
     // akaunting language
     public function setAttribute($key, $value)
     {
-        Log::debug("AppUser set attribute request $key $value");
+        Log::debug("AppUser $this->id set attribute request $key $value");
+        $key = "ddd2_user_" . $this->id . "_" . $key;
+        Cache::put($key, $value);
         return $this;
+    }
+    
+    protected function getAttribute($key, $default = null)
+    {
+        $key = "ddd2_user_" . $this->id . "_" . $key;
+        if (Cache::has($key))
+        {
+            return Cache::get($key);
+        }
+        return $default;
     }
     
     public function save()
     {
         Log::debug("AppUser save?");
+        return true;
     }
 }
