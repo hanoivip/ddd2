@@ -60,6 +60,24 @@
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
                             </div>
                         </div>
+                        
+                        <div class="form-group{{ $errors->has('captcha') ? ' has-error' : '' }}">
+                            <label for="captcha" class="col-md-4 control-label">Captcha</label>
+
+                            <div class="col-md-6">
+                            	<div class="col-sm-3">
+                                	<input id="captcha" type="text" class="form-control" name="captcha" required>
+                            	</div>
+                            	<div class="col-sm-3">
+                            		<img src="{{ captcha_src() }}" alt="captcha"/>
+                            	</div>
+                            	@if ($errors->has('captcha'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('captcha') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
