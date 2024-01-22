@@ -10,7 +10,7 @@ use Hanoivip\User\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Mervick\CurlHelper;
+use Hanoivip\CurlHelper;
 use Exception;
 
 /**
@@ -59,6 +59,7 @@ class IdpAuthen implements IDddAuthen
         {
             $token = $response['data']['token'];
             $userinfo = $response['data']['userInfo'];
+            Log::error(print_r($userinfo, true));
             $appUser = new AppUser([
                 'id' => $userinfo['id'],
                 'email' => $userinfo['email'],
@@ -88,6 +89,10 @@ class IdpAuthen implements IDddAuthen
                 $record->save();
             }
             return $token;
+        }
+        else
+        {
+            Log::error("Ipd login failure. Status: " + $response['status'] + ", content: " + $response['content']);
         }
     }
     

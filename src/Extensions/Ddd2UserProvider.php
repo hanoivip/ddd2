@@ -50,8 +50,10 @@ class Ddd2UserProvider implements UserProvider
         $hash = md5($username . $password . $device);
         if (Cache::has("ddd2_hash_$hash"))
         {
+            //Log::debug('Ddd2UserProvider...cache hit ' . $hash);
             return Cache::get("ddd2_hash_$hash");
         }
+        //Log::debug('Ddd2UserProvider...cache not hit ' . $hash);
         $token = $this->auth->authen($device, $username, $password);
         $user = $this->auth->getUserByToken($token);
         if (!empty($user) && $user->getAuthIdentifier() > 0)

@@ -2,8 +2,6 @@
 namespace Hanoivip\Ddd2\Controllers;
 
 use Hanoivip\Ddd2\IDddAuthen;
-use Illuminate\Foundation\Auth\RedirectsUsers;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +13,8 @@ use Carbon\Carbon;
 use Hanoivip\User\Facades\DeviceFacade;
 use Illuminate\Auth\Events\Login;
 use Hanoivip\Ddd2\Requests\LoginRequest;
+use Hanoivip\Ddd2\Services\RedirectsUsers;
+use Hanoivip\Ddd2\Services\ThrottlesLogins;
 
 class Ddd2 extends Controller
 {
@@ -118,70 +118,6 @@ class Ddd2 extends Controller
     public function username()
     {
         return 'username';
-    }
-    
-    /**
-     * @deprecated
-     * @param LoginRequest $request
-     */
-    public function doLogin1(LoginRequest $request)
-    {
-        $device = $request->get('device');
-        $username = $request->input('username');
-        $password = $request->input('password');
-        Log::debug("Ddd2 user is logining {$username}");
-        try
-        {
-            $result = Auth::attempt(['username' => $username, 'password' => $password, 'device' => $device->deviceId]);
-            if (!empty($result))
-            {
-                $user = Auth::user();
-                // self-generate token
-                $accessToken = Str::random(16);
-                DeviceFacade::mapUserDevice($device, $user->getAuthIdentifier(), $accessToken);
-                event(new Login("ddd2", $user, true));
-                if ($request->expectsJson())
-                {
-                    return response()->json([
-                        'error'=>0,
-                        'message'=>'login success',
-                        'data'=>[
-                            'token' => $accessToken,
-                            'expires' => Carbon::now()->addDays(30)->timestamp,
-                            'app_user_id' => $user->getAuthIdentifier()
-                        ]]);
-                }
-                else
-                {
-                    //Cookie::queue(Cookie::make('access_token',  $accessToken));
-                    $redirect = $request->get('redirect');
-                    if (!empty($redirect))
-                    {
-                        return response()->redirectTo($redirect);
-                    }
-                    return redirect()->route('login-success');
-                }
-            }
-            else
-            {
-                if ($request->expectsJson())
-                    return response()->json(['error'=>1, 'message'=> __('hanoivip.ddd2::auth.failed')]);
-                    else
-                    {
-                        //return back()->withInput()->withErrors(['username' => __('hanoivip.ddd2::auth.failed')]);
-                        return view('hanoivip::auth.login', ['error_message' => __('hanoivip.ddd2::auth.failed')]);
-                    }
-            }
-        }
-        catch (Exception $e)
-        {
-            Log::error("Ddd2 login ex:" . $e->getMessage());
-            report($e);
-            if ($request->expectsJson())
-                return response()->json(['error'=>2, 'message'=>'Ddd2 login exception!', 'data'=>[]]);
-                else
-                    return view('hanoivip::auth.login-exception');
-        }
     }
     
     public function logout(Request $request)
